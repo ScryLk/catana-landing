@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+/* Design system Catana — grafite em camadas (só escala de cinza) */
+@theme inline {
+  --font-sans: var(--font-archivo), sans-serif;
+  --font-mono: var(--font-plex-mono), monospace;
+
+  --color-graphite-950: #131315; /* fundo base */
+  --color-graphite-900: #1a1a1d; /* banda de seção */
+  --color-graphite-850: #202024; /* banda de seção */
+  --color-graphite-800: #26262b; /* superfícies */
+  --color-graphite-600: #3a3a40; /* bordas e filetes */
+  --color-graphite-400: #6b6b74; /* texto secundário */
+  --color-graphite-300: #8e8e96; /* texto secundário */
+  --color-graphite-200: #c9c9cf; /* texto de apoio */
+  --color-graphite-100: #e9e9ec; /* texto principal */
+}
+
+body {
+  background: #131315;
+  color: #e9e9ec;
+  font-family: var(--font-archivo), sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: #e9e9ec;
+  color: #131315;
+}
+
+/* Estante de catálogos do hero: entrada em cascata + hover que
+   endireita e levanta a capa. --rot/--lift/--delay vêm por capa. */
+.catalog-cover {
+  opacity: 0;
+  transform: rotate(var(--rot)) translateY(var(--lift));
+  animation: coverIn 0.5s ease-out var(--delay) forwards;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.catalog-cover:hover {
+  transform: rotate(0deg) translateY(calc(var(--lift) - 22px));
+  box-shadow: -10px 14px 30px rgba(0, 0, 0, 0.5) !important;
+  z-index: 40 !important;
+}
+
+@keyframes coverIn {
+  from {
+    opacity: 0;
+    translate: 0 28px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalog-cover {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
