@@ -27,7 +27,8 @@ export default function CoverShelf() {
                 zIndex: i + 1,
                 "--rot": `${ROTS[i]}deg`,
                 "--lift": `${LIFTS[i]}px`,
-                "--delay": `${(0.08 * i).toFixed(2)}s`,
+                // Espera a cortina da intro subir antes de entrar
+                "--delay": `${(2.9 + 0.06 * i).toFixed(2)}s`,
               } as React.CSSProperties
             }
           >

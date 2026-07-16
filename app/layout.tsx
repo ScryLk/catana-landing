@@ -17,7 +17,7 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Catana — Catálogos sob encomenda",
+  title: "Catana",
   description:
     "Catálogos profissionais, feitos sob encomenda. Você envia produtos e fotos; entregamos o catálogo pronto em PDF.",
 };

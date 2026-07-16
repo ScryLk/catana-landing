@@ -28,6 +28,36 @@ body {
   color: #131315;
 }
 
+/* Scroll da página no tema grafite (Firefox/Chrome 121+) */
+html {
+  scrollbar-color: #3a3a40 #131315;
+}
+
+/* Scroll personalizado para painéis internos (dropdown, modal) */
+.custom-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #3a3a40 transparent;
+}
+
+.custom-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: #3a3a40;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: #6b6b74;
+}
+
 /* Estante de catálogos do hero: entrada em cascata + hover que
    endireita e levanta a capa. --rot/--lift/--delay vêm por capa. */
 .catalog-cover {
@@ -60,5 +90,106 @@ body {
     opacity: 1;
     transform: none;
     transition: none;
+  }
+}
+
+/* ===== Hero "capa de catálogo" ===== */
+
+/* Malha de células de diagramação, esmaecendo nas bordas */
+.hero-grid {
+  background-image:
+    linear-gradient(to right, rgba(233, 233, 236, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(233, 233, 236, 0.05) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(
+    ellipse 95% 90% at 50% 42%,
+    black 40%,
+    transparent 82%
+  );
+}
+
+/* Luz suave atrás do bloco central, pra dar profundidade */
+.hero-glow {
+  background: radial-gradient(
+    620px 400px at 50% 34%,
+    rgba(233, 233, 236, 0.055),
+    transparent 70%
+  );
+}
+
+/* Revelação em cascata depois que a cortina da intro sobe.
+   Cada elemento define seu momento via --reveal. */
+.hero-reveal {
+  opacity: 0;
+  animation: heroReveal 0.7s ease-out var(--reveal, 3s) forwards;
+}
+
+@keyframes heroReveal {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-reveal {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* ===== Intro — assinatura "catana" desenhada e cortina que sobe =====
+   Timeline: 0.35s de respiro → traço principal (1.5s) → corte do t
+   (0.25s) → pausa → cortina sobe. O desmonte acontece no componente
+   via animationend de `introExit`. */
+.intro-overlay {
+  animation: introExit 0.7s cubic-bezier(0.76, 0, 0.24, 1) 2.75s forwards;
+  will-change: transform;
+}
+
+.intro-stroke {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.intro-stroke-main {
+  animation: introDraw 1.5s cubic-bezier(0.45, 0, 0.3, 1) 0.35s forwards;
+}
+
+.intro-stroke-cross {
+  animation: introDraw 0.25s ease-out 1.9s forwards;
+}
+
+@keyframes introDraw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Painel do dropdown dedicado */
+@keyframes dropIn {
+  from {
+    opacity: 0;
+    translate: 0 -4px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes introExit {
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-overlay {
+    display: none;
   }
 }

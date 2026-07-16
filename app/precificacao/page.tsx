@@ -2,10 +2,16 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import CoverShelf from "@/components/CoverShelf";
 import Faq from "@/components/Faq";
+import HeroMarginalia from "@/components/HeroMarginalia";
+import IntroOverlay from "@/components/IntroOverlay";
+import OrderButton from "@/components/OrderButton";
+import OrderModal from "@/components/OrderModal";
+import PortfolioGallery from "@/components/PortfolioGallery";
+import Signature from "@/components/Signature";
 import { PRECOS } from "@/lib/pricing";
 
 export const metadata: Metadata = {
-  title: "Precificação — Catana",
+  title: "Catana",
   description:
     "Três formatos de encomenda, do enxuto ao completo. Todos entregues em PDF, prontos para enviar e imprimir.",
 };
@@ -26,6 +32,16 @@ function Eyebrow({ label }: { label: string }) {
         {label}
       </span>
       <span className="h-px flex-1 bg-graphite-600" />
+    </div>
+  );
+}
+
+/* Linha de especificação do plano — números em formato de ficha
+   técnica, ecoando a marginalia da capa */
+function PlanSpecs({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mb-6 border-y border-graphite-600/60 py-3 font-mono text-[11px] font-medium tracking-[0.18em] text-graphite-300">
+      {children}
     </div>
   );
 }
@@ -52,68 +68,106 @@ function PlanItem({
 
 const COMPARACAO: [string, string, string, string][] = [
   ["Páginas", "Até 8", "Até 16", "Conforme escopo"],
-  ["Estilo visual", "Da biblioteca Catana", "Ajustado à sua marca", "Conforme escopo"],
-  ["Produtos", "Até 20", "Até 40", "Conforme escopo"],
-  ["Descrições", "1 frase por produto", "2–3 frases por produto", "Conforme escopo"],
-  ["Revisões", "1 rodada", "2 rodadas", "Conforme contrato"],
   ["Prazo", "7 dias úteis", "15 dias úteis", "A combinar"],
+  ["Garantia de ajustes", "3 meses", "12 meses", "Conforme contrato"],
 ];
 
 export default function Precificacao() {
   return (
     <div className="min-h-screen bg-graphite-950 text-graphite-100">
-      {/* Topo */}
-      <header
-        className={`relative z-[3] flex items-center justify-between py-6 ${PAD_X}`}
-      >
-        <span className="text-xl font-extrabold tracking-[-0.02em] text-graphite-100">
-          catana
-        </span>
-        <a
-          href="#"
-          className="px-1 py-2 font-mono text-xs font-medium tracking-[0.18em] text-graphite-300 no-underline transition-colors hover:text-graphite-200 focus-visible:rounded focus-visible:outline-2 focus-visible:outline-graphite-200 focus-visible:outline-offset-[3px]"
-        >
-          ← VOLTAR
-        </a>
-      </header>
+      <IntroOverlay />
+      <OrderModal />
 
-      {/* Hero */}
-      <section
-        className={`relative overflow-hidden pt-[clamp(48px,8vw,96px)] pb-[clamp(72px,10vw,120px)] ${PAD_X}`}
-      >
-        <div className="relative z-[2] mx-auto flex max-w-[880px] flex-col items-center text-center">
+      {/* Capa do catálogo: header + hero emoldurados pela marginalia
+          de gráfica, sobre a malha de diagramação */}
+      <div className="relative">
+        <div aria-hidden className="hero-grid absolute inset-0 z-0" />
+        <div aria-hidden className="hero-glow absolute inset-0 z-0" />
+        <HeroMarginalia />
+
+        {/* Topo */}
+        <header
+          className={`hero-reveal relative z-[3] flex items-center justify-between py-6 ${PAD_X}`}
+          style={{ "--reveal": "3.4s" } as React.CSSProperties}
+        >
           <Image
             src="/logo.png"
-            alt=""
-            width={96}
-            height={96}
+            alt="catana"
+            width={32}
+            height={32}
             priority
-            className="mb-1 block"
+            className="block"
           />
-          <div className="mb-7 text-[clamp(34px,4.5vw,48px)] font-extrabold tracking-[-0.02em] text-graphite-100">
-            catana
-          </div>
-          <h1 className="m-0 mb-[60px] text-[clamp(20px,2.6vw,27px)] font-medium leading-[1.25] tracking-[-0.01em] text-graphite-200 text-balance">
-            Catálogos profissionais, feitos sob encomenda.
-          </h1>
-          <div className="flex flex-wrap justify-center gap-4">
-            <button className={`${BTN_PRIMARY} px-7 py-4 text-[15px]`}>
-              Encomendar meu catálogo
-            </button>
-            <button className={`${BTN_SECONDARY} px-7 py-4 text-[15px]`}>
-              Ver exemplos
-            </button>
-          </div>
-        </div>
+          <a
+            href="#"
+            className="px-1 py-2 font-mono text-xs font-medium tracking-[0.18em] text-graphite-300 no-underline transition-colors hover:text-graphite-200 focus-visible:rounded focus-visible:outline-2 focus-visible:outline-graphite-200 focus-visible:outline-offset-[3px]"
+          >
+            ← VOLTAR
+          </a>
+        </header>
 
-        {/* Estante de catálogos: do rascunho escuro ao branco final */}
-        <CoverShelf />
+        {/* Hero */}
+        <section
+          className={`relative overflow-hidden pt-[clamp(48px,8vw,96px)] pb-[clamp(72px,10vw,120px)] ${PAD_X}`}
+        >
+          <div className="relative z-[2] mx-auto flex max-w-[880px] flex-col items-center text-center">
+            <Image
+              src="/logo.png"
+              alt=""
+              width={96}
+              height={96}
+              priority
+              className="hero-reveal mb-2 block"
+              style={{ "--reveal": "3.0s" } as React.CSSProperties}
+            />
+            {/* Assinatura do estúdio — a mesma desenhada na intro */}
+            <Signature
+              label="catana"
+              className="hero-reveal mb-8 w-[min(64vw,380px)] text-graphite-100"
+              style={{ "--reveal": "3.1s" } as React.CSSProperties}
+            />
+            <h1
+              className="hero-reveal m-0 mb-[60px] text-[clamp(20px,2.6vw,27px)] font-medium leading-[1.25] tracking-[-0.01em] text-graphite-200 text-balance"
+              style={{ "--reveal": "3.2s" } as React.CSSProperties}
+            >
+              Catálogos profissionais, feitos sob encomenda.
+            </h1>
+            <div
+              className="hero-reveal flex flex-wrap justify-center gap-4"
+              style={{ "--reveal": "3.3s" } as React.CSSProperties}
+            >
+              <OrderButton className={`${BTN_PRIMARY} px-7 py-4 text-[15px]`}>
+                Encomendar meu catálogo
+              </OrderButton>
+              <a
+                href="#exemplos"
+                className={`${BTN_SECONDARY} inline-block px-7 py-4 text-[15px] no-underline`}
+              >
+                Ver exemplos
+              </a>
+            </div>
+          </div>
+
+          {/* Estante de catálogos: do rascunho escuro ao branco final */}
+          <CoverShelf />
+        </section>
+      </div>
+
+      {/* Portfólio */}
+      <section
+        id="exemplos"
+        className={`scroll-mt-6 bg-graphite-900 py-[clamp(36px,5vw,64px)] ${PAD_X}`}
+      >
+        <div className="mx-auto max-w-[1120px]">
+          <Eyebrow label="CAT—04.1 · EXEMPLOS" />
+          <PortfolioGallery />
+        </div>
       </section>
 
       {/* Planos */}
       <section className={`bg-graphite-950 py-[clamp(56px,8vw,96px)] ${PAD_X}`}>
         <div className="mx-auto max-w-[1120px]">
-          <Eyebrow label="CAT—04.1 · FORMATOS" />
+          <Eyebrow label="CAT—04.2 · FORMATOS" />
 
           <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] items-stretch gap-5">
             {/* Essencial */}
@@ -122,8 +176,8 @@ export default function Precificacao() {
                 Essencial
               </div>
               <p className="m-0 mb-[18px] text-[13px] leading-normal text-graphite-300 text-pretty">
-                Para o pequeno negócio que precisa de um catálogo apresentável
-                rápido — padaria, açougue, mercadinho, loja de bairro.
+                Para o pequeno negócio que precisa de um catálogo apresentável,
+                rápido.
               </p>
               <div className="mb-1 flex items-baseline gap-2.5">
                 <span className="text-[40px] font-extrabold tracking-[-0.02em] text-graphite-100">
@@ -133,30 +187,23 @@ export default function Precificacao() {
                   {PRECOS.essencialTabela}
                 </span>
               </div>
-              <div className={`${MONO_11} mb-[26px]`}>
-                CONDIÇÃO DE LANÇAMENTO — 10 PRIMEIROS CLIENTES
-              </div>
+              <div className={`${MONO_11} mb-[26px]`}>PREÇO DE LANÇAMENTO</div>
+              <PlanSpecs>8 PÁGINAS · 7 DIAS ÚTEIS</PlanSpecs>
               <ul className="m-0 mb-8 flex flex-1 list-none flex-col gap-3 p-0">
-                <PlanItem>Até 8 páginas, com até 20 produtos</PlanItem>
                 <PlanItem>
-                  Estilo visual escolhido da biblioteca Catana — do editorial
-                  claro ao premium escuro
+                  Estilo escolhido da biblioteca Catana
                 </PlanItem>
                 <PlanItem>
-                  Diagramação profissional: capa, contracapa, seções por
-                  categoria e preços formatados
+                  Diagramação profissional, da capa aos preços
                 </PlanItem>
-                <PlanItem>
-                  Redação leve das descrições (1 frase por produto)
-                </PlanItem>
-                <PlanItem>1 rodada de revisão</PlanItem>
                 <PlanItem>PDF pronto para WhatsApp, e-mail e gráfica</PlanItem>
               </ul>
-              <button
+              <OrderButton
+                plano="Essencial"
                 className={`${BTN_SECONDARY} w-full px-5 py-3.5 text-[15px]`}
               >
                 Encomendar Essencial
-              </button>
+              </OrderButton>
             </div>
 
             {/* Completo */}
@@ -168,9 +215,8 @@ export default function Precificacao() {
                 Completo
               </div>
               <p className="m-0 mb-[18px] text-[13px] leading-normal text-graphite-300 text-pretty">
-                Para o negócio que já tem marca rodando e quer um catálogo com
-                cara de agência — restaurantes, casas de carnes, boutiques,
-                atacado.
+                Para quem já tem marca rodando e quer um catálogo com cara de
+                agência.
               </p>
               <div className="mb-1 text-[40px] font-extrabold tracking-[-0.02em] text-graphite-100">
                 {PRECOS.completo}
@@ -178,34 +224,24 @@ export default function Precificacao() {
               <div className={`${MONO_11} mb-[26px]`}>
                 TUDO DO ESSENCIAL, E MAIS:
               </div>
+              <PlanSpecs>16 PÁGINAS · 15 DIAS ÚTEIS</PlanSpecs>
               <ul className="m-0 mb-8 flex flex-1 list-none flex-col gap-3 p-0">
-                <PlanItem light>Até 16 páginas, com até 40 produtos</PlanItem>
                 <PlanItem light>
-                  <strong>Estilo ajustado às cores e à logo da sua marca</strong>{" "}
-                  — paleta e tipografia combinando
+                  <strong>Visual ajustado às cores e à logo da sua marca</strong>
                 </PlanItem>
                 <PlanItem light>
-                  Capa e contracapa dedicadas + página de apresentação do
-                  negócio
+                  Descrições específicas do seu segmento
                 </PlanItem>
                 <PlanItem light>
-                  Descrições com 2–3 frases por produto, específicas do seu
-                  segmento
-                </PlanItem>
-                <PlanItem light>
-                  Página de encomendas ou atacado, quando fizer sentido
-                </PlanItem>
-                <PlanItem light>2 rodadas de revisão</PlanItem>
-                <PlanItem light>
-                  PDF final com verificação página a página (cores, fontes,
-                  espaçamento)
+                  Capa, contracapa e página de apresentação
                 </PlanItem>
               </ul>
-              <button
+              <OrderButton
+                plano="Completo"
                 className={`${BTN_PRIMARY} w-full px-5 py-3.5 text-[15px]`}
               >
                 Encomendar Completo
-              </button>
+              </OrderButton>
             </div>
 
             {/* Sob medida */}
@@ -214,8 +250,7 @@ export default function Precificacao() {
                 Sob medida
               </div>
               <p className="m-0 mb-[18px] text-[13px] leading-normal text-graphite-300 text-pretty">
-                Para volume e recorrência — redes com várias linhas de produto,
-                catálogos grandes e atualização periódica.
+                Para redes e operações com volume e recorrência.
               </p>
               <div className="mb-1 text-[40px] font-extrabold tracking-[-0.02em] text-graphite-100">
                 Sob consulta
@@ -223,32 +258,44 @@ export default function Precificacao() {
               <div className={`${MONO_11} mb-[26px]`}>
                 PRECIFICADO POR PROPOSTA
               </div>
+              <PlanSpecs>ESCOPO LIVRE · PRAZO A COMBINAR</PlanSpecs>
               <ul className="m-0 mb-8 flex flex-1 list-none flex-col gap-3 p-0">
-                <PlanItem>Catálogos acima de 16 páginas ou 40 produtos</PlanItem>
+                <PlanItem>Catálogos acima de 16 páginas</PlanItem>
                 <PlanItem>
-                  Múltiplas linhas e versões — varejo + atacado, unidades
-                  diferentes
+                  Múltiplas linhas e versões do catálogo
                 </PlanItem>
                 <PlanItem>
-                  Atualização periódica: encarte de ofertas, cardápio sazonal,
-                  coleção nova
+                  Atualização periódica: ofertas, sazonal, coleção
                 </PlanItem>
-                <PlanItem>Prazos expressos quando você precisar</PlanItem>
               </ul>
-              <button
+              <OrderButton
+                plano="Sob medida"
                 className={`${BTN_SECONDARY} w-full px-5 py-3.5 text-[15px]`}
               >
                 Falar com a gente
-              </button>
+              </OrderButton>
             </div>
+          </div>
+
+          {/* Detalhes completos moram na tabela, não nos cards */}
+          <div className="mt-9 text-center">
+            <a
+              href="#comparacao"
+              className="font-mono text-xs font-medium tracking-[0.18em] text-graphite-300 no-underline transition-colors hover:text-graphite-200 focus-visible:rounded focus-visible:outline-2 focus-visible:outline-graphite-200 focus-visible:outline-offset-[3px]"
+            >
+              COMPARAÇÃO COMPLETA ↓
+            </a>
           </div>
         </div>
       </section>
 
       {/* Comparação */}
-      <section className={`bg-graphite-900 py-[clamp(56px,8vw,96px)] ${PAD_X}`}>
+      <section
+        id="comparacao"
+        className={`scroll-mt-6 bg-graphite-900 py-[clamp(56px,8vw,96px)] ${PAD_X}`}
+      >
         <div className="mx-auto max-w-[1120px]">
-          <Eyebrow label="CAT—04.2 · COMPARAÇÃO" />
+          <Eyebrow label="CAT—04.3 · COMPARAÇÃO" />
           <div className="overflow-x-auto">
             <table className="w-full min-w-[640px] border-collapse text-sm text-graphite-200">
               <thead>
@@ -284,13 +331,24 @@ export default function Precificacao() {
               </tbody>
             </table>
           </div>
+
+          {/* O que a garantia de ajustes cobre */}
+          <p className="m-0 mt-6 max-w-[720px] text-[13px] leading-normal text-graphite-300 text-pretty">
+            <strong className="font-medium text-graphite-200">
+              Garantia de ajustes:
+            </strong>{" "}
+            durante o período, você pede alterações no catálogo entregue:
+            trocar ou adicionar produtos, atualizar preços, incluir tags de
+            desconto e ofertas. Encerrado o período, os ajustes passam a ser
+            contratados como uma nova encomenda.
+          </p>
         </div>
       </section>
 
       {/* FAQ */}
       <section className={`bg-graphite-950 py-[clamp(56px,8vw,96px)] ${PAD_X}`}>
         <div className="mx-auto max-w-[760px]">
-          <Eyebrow label="CAT—04.3 · PERGUNTAS" />
+          <Eyebrow label="CAT—04.4 · PERGUNTAS" />
           <Faq />
         </div>
       </section>
@@ -303,12 +361,12 @@ export default function Precificacao() {
           Não sabe qual escolher? A gente ajuda.
         </h2>
         <p className="m-0 mb-8 text-base text-graphite-200">
-          Conta o que você vende e quantos produtos tem — a gente indica o
+          Conta o que você vende e quantos produtos tem. A gente indica o
           formato certo.
         </p>
-        <button className={`${BTN_PRIMARY} px-8 py-4 text-base`}>
+        <OrderButton className={`${BTN_PRIMARY} px-8 py-4 text-base`}>
           Pedir orçamento
-        </button>
+        </OrderButton>
       </section>
 
       {/* Rodapé */}

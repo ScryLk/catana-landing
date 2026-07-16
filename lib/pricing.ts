@@ -5,5 +5,5 @@ export const PRECOS = {
   /** Preço de tabela do Essencial (aparece riscado) */
   essencialTabela: "R$ 490",
   /** Preço do plano Completo */
-  completo: "R$ 890",
+  completo: "R$ 590",
 } as const;
