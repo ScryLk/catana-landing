@@ -195,12 +195,12 @@ export default function OrderModal() {
               <h2 className="m-0 mb-2 text-2xl font-extrabold tracking-[-0.02em] text-graphite-100">
                 Encomendar catálogo
               </h2>
-              <p className="m-0 mb-7 text-[13px] leading-normal text-graphite-300">
+              <p className="m-0 mb-6 text-[13px] leading-normal text-graphite-300">
                 Só o essencial para começar. Logo, fotos e lista de produtos
                 você envia depois, direto na conversa.
               </p>
 
-              <form onSubmit={submit} className="flex flex-col gap-5">
+              <form onSubmit={submit} className="flex flex-col gap-4">
                 {/* Armadilha para bots. Fica fora da tela e fora da tabulação;
                     humano não chega aqui, robô preenche tudo. */}
                 <div
@@ -229,7 +229,7 @@ export default function OrderModal() {
                   />
                 </div>
 
-                <div className="grid gap-5 sm:grid-cols-2">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <label htmlFor="ord-segmento" className={LABEL}>
                       SEGMENTO
@@ -254,7 +254,7 @@ export default function OrderModal() {
                   </div>
                 </div>
 
-                <div className="grid gap-5 sm:grid-cols-2">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <label htmlFor="ord-produtos" className={LABEL}>
                       QUANTOS PRODUTOS?
