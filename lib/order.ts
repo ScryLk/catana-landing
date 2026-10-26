@@ -61,11 +61,26 @@ export function buildWhatsAppUrl(d: OrderData): string {
    O WhatsApp continua sendo o caminho principal; o e-mail é a rede de
    segurança para quando a pessoa fecha o zap sem enviar. */
 
-// Por padrao, mesma origem: no apex o nginx faz proxy de /api/ para o Django.
-// Deploy que nao tenha esse proxy (ex.: preview da Vercel) precisa apontar
-// NEXT_PUBLIC_ORDER_ENDPOINT para https://usecatana.com.br/api/public/order-request/
-export const ORDER_ENDPOINT =
-  process.env.NEXT_PUBLIC_ORDER_ENDPOINT || "/api/public/order-request/";
+/* Onde o pedido e entregue.
+
+   No apex o nginx faz proxy de /api/ para o Django, entao a mesma origem
+   resolve. Fora do apex (preview da Vercel, por exemplo) esse proxy nao
+   existe: o POST iria para um 404. Nesses casos apontamos para o apex, que
+   responde com CORS liberado para as origens conhecidas.
+
+   NEXT_PUBLIC_ORDER_ENDPOINT tem a palavra final, quando definido. */
+const APEX = "https://usecatana.com.br";
+const ORDER_PATH = "/api/public/order-request/";
+const HOSTS_COM_PROXY = new Set(["usecatana.com.br", "www.usecatana.com.br"]);
+
+export function orderEndpoint(): string {
+  const override = process.env.NEXT_PUBLIC_ORDER_ENDPOINT;
+  if (override) return override;
+  if (typeof window === "undefined") return ORDER_PATH;
+  return HOSTS_COM_PROXY.has(window.location.hostname)
+    ? ORDER_PATH
+    : `${APEX}${ORDER_PATH}`;
+}
 
 export type OrderPayload = {
   empresa: string;
@@ -106,7 +121,7 @@ export async function submitOrder(
   const controle = new AbortController();
   const timer = setTimeout(() => controle.abort(), timeoutMs);
   try {
-    const resposta = await fetch(ORDER_ENDPOINT, {
+    const resposta = await fetch(orderEndpoint(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
