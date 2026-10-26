@@ -26,6 +26,34 @@ const LABEL =
 const FIELD =
   "w-full rounded-lg border border-graphite-600 bg-graphite-950 px-4 py-3 font-sans text-[15px] text-graphite-100 placeholder:text-graphite-400 focus:border-graphite-300 focus:outline-none";
 
+/* Selo de estado: verde para confirmado, vermelho para falha.
+   Desenhado em SVG para nao depender de fonte de icone nem de emoji,
+   que renderiza diferente em cada sistema. */
+function Selo({ estado }: { estado: "ok" | "erro" }) {
+  const ok = estado === "ok";
+  const cor = ok ? "#3fb950" : "#f85149";
+  const fundo = ok ? "rgba(63,185,80,0.12)" : "rgba(248,81,73,0.12)";
+  return (
+    <span
+      aria-hidden="true"
+      className="mb-4 flex h-11 w-11 items-center justify-center rounded-full"
+      style={{ backgroundColor: fundo, border: `1px solid ${cor}` }}
+    >
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke={cor}
+           strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        {ok ? (
+          <path d="M4 10.5 8 14.5 16 5.5" />
+        ) : (
+          <>
+            <path d="M5.5 5.5l9 9" />
+            <path d="M14.5 5.5l-9 9" />
+          </>
+        )}
+      </svg>
+    </span>
+  );
+}
+
 export default function OrderModal() {
   const [open, setOpen] = useState(false);
   const [plano, setPlano] = useState<string>(PLANO_INDICACAO);
@@ -152,13 +180,14 @@ export default function OrderModal() {
 
           {concluido ? (
             <div>
+              <Selo estado={enviado ? "ok" : "erro"} />
               <h2 className="m-0 mb-2 text-2xl font-extrabold tracking-[-0.02em] text-graphite-100">
-                {enviado ? "Pedido recebido" : "Pedido pronto"}
+                {enviado ? "Pedido recebido" : "Não foi possível enviar"}
               </h2>
               <p className="m-0 mb-7 text-[13px] leading-normal text-graphite-300">
                 {enviado
                   ? "Recebemos seus dados e a resposta chega por e-mail. Se preferir falar agora, é só chamar no WhatsApp — a mensagem já vai preenchida."
-                  : "Não conseguimos registrar o pedido agora. Ele já está montado: envie pelo WhatsApp abaixo e não se perde."}
+                  : "O envio não foi confirmado. O pedido já está montado — envie pelo WhatsApp abaixo e nada se perde."}
               </p>
 
               <a
