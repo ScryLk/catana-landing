@@ -163,7 +163,7 @@ export default function Precificacao() {
 
           <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] items-stretch gap-5">
             {/* Essencial */}
-            <div className="flex flex-col rounded-xl border border-graphite-600 bg-graphite-900 px-7 py-8 transition-[border-color,transform] duration-200 hover:-translate-y-[3px] hover:border-graphite-400">
+            <div className="flex flex-col rounded-xl border border-graphite-600 bg-graphite-900 px-7 py-8 transition-colors duration-200 hover:border-graphite-400">
               <div className="mb-1.5 text-lg font-bold text-graphite-100">
                 Essencial
               </div>
@@ -207,7 +207,7 @@ export default function Precificacao() {
             </div>
 
             {/* Completo */}
-            <div className="relative flex flex-col rounded-xl border border-graphite-300 bg-graphite-850 px-7 py-8 transition-[border-color,transform] duration-200 hover:-translate-y-[3px] hover:border-graphite-200">
+            <div className="relative flex flex-col rounded-xl border border-graphite-300 bg-graphite-850 px-7 py-8 transition-colors duration-200 hover:border-graphite-200">
               <div className="absolute -top-[11px] left-7 rounded bg-graphite-100 px-2.5 py-1 font-mono text-[11px] font-medium tracking-[0.18em] text-graphite-950">
                 MAIS PEDIDO
               </div>
@@ -253,7 +253,7 @@ export default function Precificacao() {
             </div>
 
             {/* Sob medida */}
-            <div className="flex flex-col rounded-xl border border-graphite-600 bg-graphite-900 px-7 py-8 transition-[border-color,transform] duration-200 hover:-translate-y-[3px] hover:border-graphite-400">
+            <div className="flex flex-col rounded-xl border border-graphite-600 bg-graphite-900 px-7 py-8 transition-colors duration-200 hover:border-graphite-400">
               <div className="mb-1.5 text-lg font-bold text-graphite-100">
                 Sob medida
               </div>
@@ -282,6 +282,15 @@ export default function Precificacao() {
               >
                 Falar com a gente
               </OrderButton>
+              {/* Este plano não tem nota de pagamento, mas o espaço dela
+                  precisa existir: a lista acima é flex-1, então sem esta
+                  reserva o botão desce 27 px e sai da linha dos outros dois. */}
+              <p
+                aria-hidden="true"
+                className="m-0 mt-3 hidden text-center font-mono text-[10px] font-medium tracking-[0.16em] text-graphite-400 sm:block"
+              >
+                &nbsp;
+              </p>
             </div>
           </div>
 
