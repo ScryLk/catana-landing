@@ -27,30 +27,58 @@ const FIELD =
   "w-full rounded-lg border border-graphite-600 bg-graphite-950 px-4 py-3 font-sans text-[15px] text-graphite-100 placeholder:text-graphite-400 focus:border-graphite-300 focus:outline-none";
 
 /* Selo de estado: verde para confirmado, vermelho para falha.
-   Desenhado em SVG para nao depender de fonte de icone nem de emoji,
-   que renderiza diferente em cada sistema. */
+
+   Centralizado e com respiro próprio, porque funciona como a marca do
+   desfecho — não como detalhe do texto. O círculo entra com um leve pop e o
+   traço se desenha em seguida. Tudo em SVG inline, sem fonte de ícone nem
+   emoji, que renderiza diferente em cada sistema. Respeita quem pediu menos
+   movimento no sistema operacional. */
 function Selo({ estado }: { estado: "ok" | "erro" }) {
   const ok = estado === "ok";
   const cor = ok ? "#3fb950" : "#f85149";
   const fundo = ok ? "rgba(63,185,80,0.12)" : "rgba(248,81,73,0.12)";
   return (
-    <span
-      aria-hidden="true"
-      className="mb-4 flex h-11 w-11 items-center justify-center rounded-full"
-      style={{ backgroundColor: fundo, border: `1px solid ${cor}` }}
-    >
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke={cor}
-           strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-        {ok ? (
-          <path d="M4 10.5 8 14.5 16 5.5" />
-        ) : (
-          <>
-            <path d="M5.5 5.5l9 9" />
-            <path d="M14.5 5.5l-9 9" />
-          </>
-        )}
-      </svg>
-    </span>
+    <>
+      <style>{`
+        @keyframes selo-pop {
+          0%   { opacity: 0; transform: scale(0.62); }
+          60%  { opacity: 1; transform: scale(1.06); }
+          100% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes selo-traco {
+          to { stroke-dashoffset: 0; }
+        }
+        .selo-circulo {
+          animation: selo-pop 420ms cubic-bezier(0.2, 0.8, 0.3, 1.15) both;
+        }
+        .selo-traco {
+          stroke-dasharray: 24;
+          stroke-dashoffset: 24;
+          animation: selo-traco 340ms 200ms ease-out forwards;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .selo-circulo { animation: none; }
+          .selo-traco { stroke-dashoffset: 0; animation: none; }
+        }
+      `}</style>
+      <span
+        aria-hidden="true"
+        className="selo-circulo mx-auto my-6 flex h-11 w-11 items-center justify-center rounded-full"
+        style={{ backgroundColor: fundo, border: `1px solid ${cor}` }}
+      >
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke={cor}
+             strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          {ok ? (
+            <path className="selo-traco" d="M4 10.5 8 14.5 16 5.5" />
+          ) : (
+            <>
+              <path className="selo-traco" d="M5.5 5.5l9 9" />
+              <path className="selo-traco" style={{ animationDelay: "300ms" }} d="M14.5 5.5l-9 9" />
+            </>
+          )}
+        </svg>
+      </span>
+    </>
   );
 }
 
@@ -181,10 +209,10 @@ export default function OrderModal() {
           {concluido ? (
             <div>
               <Selo estado={enviado ? "ok" : "erro"} />
-              <h2 className="m-0 mb-2 text-2xl font-extrabold tracking-[-0.02em] text-graphite-100">
+              <h2 className="m-0 mb-2 text-center text-2xl font-extrabold tracking-[-0.02em] text-graphite-100">
                 {enviado ? "Pedido recebido" : "Não foi possível enviar"}
               </h2>
-              <p className="m-0 mb-7 text-[13px] leading-normal text-graphite-300">
+              <p className="mx-auto mb-7 mt-0 max-w-[46ch] text-center text-[13px] leading-normal text-graphite-300">
                 {enviado
                   ? "Recebemos seus dados e a resposta chega por e-mail. Se preferir falar agora, é só chamar no WhatsApp — a mensagem já vai preenchida."
                   : "O envio não foi confirmado. O pedido já está montado — envie pelo WhatsApp abaixo e nada se perde."}
