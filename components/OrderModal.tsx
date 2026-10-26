@@ -153,12 +153,12 @@ export default function OrderModal() {
           {concluido ? (
             <div>
               <h2 className="m-0 mb-2 text-2xl font-extrabold tracking-[-0.02em] text-graphite-100">
-                {enviado ? "Pedido enviado" : "Pedido pronto"}
+                {enviado ? "Pedido recebido" : "Pedido pronto"}
               </h2>
               <p className="m-0 mb-7 text-[13px] leading-normal text-graphite-300">
                 {enviado
-                  ? "Recebemos seus dados e respondemos por e-mail. Se preferir falar agora, é só chamar no WhatsApp — a mensagem já vai preenchida."
-                  : "Não conseguimos enviar por e-mail neste momento. O pedido já está montado: envie pelo WhatsApp abaixo e ele não se perde."}
+                  ? "Recebemos seus dados e a resposta chega por e-mail. Se preferir falar agora, é só chamar no WhatsApp — a mensagem já vai preenchida."
+                  : "Não conseguimos registrar o pedido agora. Ele já está montado: envie pelo WhatsApp abaixo e não se perde."}
               </p>
 
               <a

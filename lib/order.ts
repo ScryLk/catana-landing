@@ -116,7 +116,7 @@ export function buildOrderPayload(
 /** Dispara o e-mail. Nunca lança: o formulário não pode travar por causa disso. */
 export async function submitOrder(
   payload: OrderPayload,
-  timeoutMs = 1500,
+  timeoutMs = 3000,
 ): Promise<boolean> {
   const controle = new AbortController();
   const timer = setTimeout(() => controle.abort(), timeoutMs);
@@ -130,7 +130,9 @@ export async function submitOrder(
     });
     if (!resposta.ok && resposta.status !== 202) return false;
     const corpo = await resposta.json().catch(() => null);
-    return Boolean(corpo?.enviado);
+    // O backend confirma o recebimento (202) e envia em segundo plano; a
+    // chave `enviado` ficou como compatibilidade com respostas antigas.
+    return Boolean(corpo?.recebido ?? corpo?.enviado);
   } catch {
     return false;
   } finally {
