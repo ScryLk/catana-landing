@@ -54,3 +54,67 @@ export function buildWhatsAppUrl(d: OrderData): string {
     buildWhatsAppMessage(d),
   )}`;
 }
+
+/* ---- Envio por e-mail ---------------------------------------------------
+   O pedido vai para o backend (Django) por mesma-origem: /api/ no apex é
+   proxy para o backend, então não há CORS nem chave exposta no navegador.
+   O WhatsApp continua sendo o caminho principal; o e-mail é a rede de
+   segurança para quando a pessoa fecha o zap sem enviar. */
+
+export const ORDER_ENDPOINT = "/api/public/order-request/";
+
+export type OrderPayload = {
+  empresa: string;
+  segmento: string;
+  plano: string;
+  produtos: string;
+  instagram?: string;
+  email?: string;
+  impressao: boolean;
+  /** Armadilha para bot: humano não vê, robô preenche. */
+  website: string;
+  /** Tempo entre abrir o formulário e enviar, em ms. */
+  elapsed_ms: number;
+};
+
+export function buildOrderPayload(
+  d: OrderData,
+  hid: { website: string; elapsedMs: number },
+): OrderPayload {
+  return {
+    empresa: d.empresa,
+    segmento: d.segmento,
+    plano: d.plano,
+    produtos: d.produtos,
+    instagram: d.instagram,
+    email: d.email,
+    impressao: d.impresso,
+    website: hid.website,
+    elapsed_ms: Math.max(0, Math.round(hid.elapsedMs)),
+  };
+}
+
+/** Dispara o e-mail. Nunca lança: o formulário não pode travar por causa disso. */
+export async function submitOrder(
+  payload: OrderPayload,
+  timeoutMs = 1500,
+): Promise<boolean> {
+  const controle = new AbortController();
+  const timer = setTimeout(() => controle.abort(), timeoutMs);
+  try {
+    const resposta = await fetch(ORDER_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      signal: controle.signal,
+      keepalive: true,
+    });
+    if (!resposta.ok && resposta.status !== 202) return false;
+    const corpo = await resposta.json().catch(() => null);
+    return Boolean(corpo?.enviado);
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(timer);
+  }
+}

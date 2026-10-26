@@ -7,8 +7,10 @@ import {
   PLANO_INDICACAO,
   PLANOS,
   SEGMENTOS,
+  buildOrderPayload,
   buildWhatsAppMessage,
   buildWhatsAppUrl,
+  submitOrder,
   type OrderData,
 } from "@/lib/order";
 
@@ -29,6 +31,8 @@ export default function OrderModal() {
     null,
   );
   const [copiado, setCopiado] = useState(false);
+  // Momento em que o modal abriu: usado para descartar envio de bot.
+  const [abertoEm, setAbertoEm] = useState(0);
 
   // Abre quando qualquer OrderButton dispara o evento
   useEffect(() => {
@@ -37,6 +41,7 @@ export default function OrderModal() {
       setPlano(detail || PLANO_INDICACAO);
       setPedido(null);
       setCopiado(false);
+      setAbertoEm(Date.now());
       setOpen(true);
     };
     window.addEventListener("catana:order", onOrder);
@@ -59,7 +64,7 @@ export default function OrderModal() {
 
   if (!open) return null;
 
-  const submit = (e: React.FormEvent<HTMLFormElement>) => {
+  const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
     const dados: OrderData = {
@@ -73,6 +78,18 @@ export default function OrderModal() {
     };
     const url = buildWhatsAppUrl(dados);
     setPedido({ url, texto: buildWhatsAppMessage(dados) });
+    setCopiado(false);
+
+    // O e-mail sai primeiro, mas nunca segura o fluxo: 1,5 s de teto. No caso
+    // normal volta em ~200 ms; se o backend demorar ou falhar, o WhatsApp abre
+    // igual e o pedido não se perde — só deixa de chegar por e-mail.
+    await submitOrder(
+      buildOrderPayload(dados, {
+        website: String(f.get("website") ?? ""),
+        elapsedMs: abertoEm ? Date.now() - abertoEm : 0,
+      }),
+    );
+
     // Navegação direta em vez de window.open: o popup é bloqueado com
     // frequência no navegador interno do Instagram. O modal continua
     // aberto com o link e o texto como plano B.
@@ -157,6 +174,12 @@ export default function OrderModal() {
         )}
 
         <form onSubmit={submit} className="flex flex-col gap-5">
+          {/* Armadilha para bots. Fica fora da tela e fora da tabulação;
+              humano não chega aqui, robô preenche tudo. */}
+          <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+            <label htmlFor="ord-website">Não preencher</label>
+            <input id="ord-website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+          </div>
           <div>
             <label htmlFor="ord-empresa" className={LABEL}>
               NOME DA EMPRESA *
@@ -244,7 +267,7 @@ export default function OrderModal() {
             Enviar pelo WhatsApp →
           </button>
           <p className="m-0 -mt-1 text-center font-mono text-[10px] font-medium tracking-[0.18em] text-graphite-400">
-            ABRE O SEU WHATSAPP COM O PEDIDO PRONTO
+            VAI POR E-MAIL E ABRE O WHATSAPP
           </p>
         </form>
       </div>
