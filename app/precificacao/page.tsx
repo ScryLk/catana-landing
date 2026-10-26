@@ -8,7 +8,8 @@ import OrderButton from "@/components/OrderButton";
 import OrderModal from "@/components/OrderModal";
 import PortfolioGallery from "@/components/PortfolioGallery";
 import Signature from "@/components/Signature";
-import { PRECOS } from "@/lib/pricing";
+import { LOTE, PAGAMENTO, PRECOS } from "@/lib/pricing";
+import { WHATSAPP_NUMBER } from "@/lib/order";
 
 export const metadata: Metadata = {
   title: "Catana",
@@ -99,10 +100,12 @@ export default function Precificacao() {
             className="block"
           />
           <a
-            href="#"
+            href={`https://wa.me/${WHATSAPP_NUMBER}`}
+            target="_blank"
+            rel="noopener"
             className="px-1 py-2 font-mono text-xs font-medium tracking-[0.18em] text-graphite-300 no-underline transition-colors hover:text-graphite-200 focus-visible:rounded focus-visible:outline-2 focus-visible:outline-graphite-200 focus-visible:outline-offset-[3px]"
           >
-            ← VOLTAR
+            FALAR NO WHATSAPP ↗
           </a>
         </header>
 
@@ -187,7 +190,12 @@ export default function Precificacao() {
                   {PRECOS.essencialTabela}
                 </span>
               </div>
-              <div className={`${MONO_11} mb-[26px]`}>PREÇO DE LANÇAMENTO</div>
+              <div className={`${MONO_11} mb-1.5`}>
+                {LOTE.nome.toUpperCase()} · {LOTE.vagas} VAGAS · ATÉ {LOTE.prazo}
+              </div>
+              <p className="m-0 mb-[26px] text-[12px] leading-normal text-graphite-300 text-pretty">
+                Em troca, um {LOTE.contrapartida}.
+              </p>
               <PlanSpecs>8 PÁGINAS · 7 DIAS ÚTEIS</PlanSpecs>
               <ul className="m-0 mb-8 flex flex-1 list-none flex-col gap-3 p-0">
                 <PlanItem>
@@ -204,6 +212,9 @@ export default function Precificacao() {
               >
                 Encomendar Essencial
               </OrderButton>
+              <p className="m-0 mt-3 text-center font-mono text-[10px] font-medium tracking-[0.16em] text-graphite-400">
+                {PAGAMENTO.toUpperCase()}
+              </p>
             </div>
 
             {/* Completo */}
@@ -218,8 +229,13 @@ export default function Precificacao() {
                 Para quem já tem marca rodando e quer um catálogo com cara de
                 agência.
               </p>
-              <div className="mb-1 text-[40px] font-extrabold tracking-[-0.02em] text-graphite-100">
-                {PRECOS.completo}
+              <div className="mb-1 flex items-baseline gap-2.5">
+                <span className="text-[40px] font-extrabold tracking-[-0.02em] text-graphite-100">
+                  {PRECOS.completo}
+                </span>
+                <span className="text-[15px] text-graphite-400 line-through">
+                  {PRECOS.completoTabela}
+                </span>
               </div>
               <div className={`${MONO_11} mb-[26px]`}>
                 TUDO DO ESSENCIAL, E MAIS:
@@ -242,6 +258,9 @@ export default function Precificacao() {
               >
                 Encomendar Completo
               </OrderButton>
+              <p className="m-0 mt-3 text-center font-mono text-[10px] font-medium tracking-[0.16em] text-graphite-400">
+                {PAGAMENTO.toUpperCase()}
+              </p>
             </div>
 
             {/* Sob medida */}

@@ -1,8 +1,8 @@
 /* Encomenda: opções do formulário e montagem do link de WhatsApp.
    Sem backend — o pedido vira uma mensagem pré-preenchida no zap. */
 
-// TODO: trocar pelo número real da Catana (formato: 55 + DDD + número)
-export const WHATSAPP_NUMBER = "5500000000000";
+// Número real da Catana (formato: 55 + DDD + número)
+export const WHATSAPP_NUMBER = "5555991333502";
 
 export const SEGMENTOS = [
   "Restaurante & alimentação",
@@ -34,7 +34,7 @@ export type OrderData = {
   impresso: boolean;
 };
 
-export function buildWhatsAppUrl(d: OrderData): string {
+export function buildWhatsAppMessage(d: OrderData): string {
   const linhas = [
     "Olá! Quero encomendar um catálogo Catana.",
     "",
@@ -46,7 +46,11 @@ export function buildWhatsAppUrl(d: OrderData): string {
   if (d.instagram) linhas.push(`• Instagram/site: ${d.instagram}`);
   if (d.email) linhas.push(`• E-mail: ${d.email}`);
   linhas.push(`• Versão impressa: ${d.impresso ? "sim, quero orçamento" : "não"}`);
+  return linhas.join("\n");
+}
+
+export function buildWhatsAppUrl(d: OrderData): string {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-    linhas.join("\n"),
+    buildWhatsAppMessage(d),
   )}`;
 }
