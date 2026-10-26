@@ -7,7 +7,9 @@ import {
   PLANO_INDICACAO,
   PLANOS,
   SEGMENTOS,
+  buildWhatsAppMessage,
   buildWhatsAppUrl,
+  type OrderData,
 } from "@/lib/order";
 
 /* Formulário de encomenda: só o que o cliente sabe de cor.
@@ -21,12 +23,20 @@ const FIELD =
 export default function OrderModal() {
   const [open, setOpen] = useState(false);
   const [plano, setPlano] = useState<string>(PLANO_INDICACAO);
+  // Guarda o pedido já montado: se o navegador interno bloquear a
+  // navegação, o visitante ainda tem o link e o texto para copiar.
+  const [pedido, setPedido] = useState<{ url: string; texto: string } | null>(
+    null,
+  );
+  const [copiado, setCopiado] = useState(false);
 
   // Abre quando qualquer OrderButton dispara o evento
   useEffect(() => {
     const onOrder = (e: Event) => {
       const detail = (e as CustomEvent<string>).detail;
       setPlano(detail || PLANO_INDICACAO);
+      setPedido(null);
+      setCopiado(false);
       setOpen(true);
     };
     window.addEventListener("catana:order", onOrder);
@@ -52,7 +62,7 @@ export default function OrderModal() {
   const submit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
-    const url = buildWhatsAppUrl({
+    const dados: OrderData = {
       empresa: String(f.get("empresa") ?? "").trim(),
       segmento: String(f.get("segmento") ?? ""),
       plano: String(f.get("plano") ?? ""),
@@ -60,8 +70,27 @@ export default function OrderModal() {
       instagram: String(f.get("instagram") ?? "").trim() || undefined,
       email: String(f.get("email") ?? "").trim() || undefined,
       impresso: f.get("impresso") === "on",
-    });
-    window.open(url, "_blank", "noopener");
+    };
+    const url = buildWhatsAppUrl(dados);
+    setPedido({ url, texto: buildWhatsAppMessage(dados) });
+    // Navegação direta em vez de window.open: o popup é bloqueado com
+    // frequência no navegador interno do Instagram. O modal continua
+    // aberto com o link e o texto como plano B.
+    window.location.href = url;
+  };
+
+  const copiar = async () => {
+    if (!pedido) return;
+    try {
+      await navigator.clipboard.writeText(pedido.texto);
+      setCopiado(true);
+    } catch {
+      // clipboard indisponível: o texto fica visível para seleção manual
+    }
+  };
+
+  const fechar = () => {
+    setPedido(null);
     setOpen(false);
   };
 
@@ -71,7 +100,7 @@ export default function OrderModal() {
       aria-modal="true"
       aria-label="Encomendar catálogo"
       className="fixed inset-0 z-50 flex items-center justify-center bg-graphite-950/90 p-5 backdrop-blur-sm"
-      onClick={() => setOpen(false)}
+      onClick={fechar}
     >
       <div
         className="custom-scroll max-h-[92vh] w-full max-w-[560px] overflow-y-auto rounded-xl border border-graphite-600 bg-graphite-900 p-7 sm:p-9"
@@ -84,7 +113,7 @@ export default function OrderModal() {
           <button
             type="button"
             autoFocus
-            onClick={() => setOpen(false)}
+            onClick={fechar}
             className="cursor-pointer rounded px-2 py-1 font-mono text-xs font-medium tracking-[0.18em] text-graphite-300 transition-colors hover:text-graphite-100 focus-visible:outline-2 focus-visible:outline-graphite-200 focus-visible:outline-offset-[3px]"
           >
             ✕
@@ -97,6 +126,35 @@ export default function OrderModal() {
           Só o essencial para começar. Logo, fotos e lista de produtos você
           envia depois, direto na conversa.
         </p>
+
+        {pedido && (
+          <div className="mb-7 rounded-lg border border-graphite-600 bg-graphite-950 p-4">
+            <p className="m-0 mb-3 text-[13px] leading-normal text-graphite-200">
+              Se o WhatsApp não abrir, use um dos caminhos abaixo — o pedido já
+              está pronto.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <a
+                href={pedido.url}
+                target="_blank"
+                rel="noopener"
+                className="rounded-md border border-graphite-100 bg-graphite-100 px-4 py-2 font-sans text-[13px] font-bold text-graphite-950 no-underline"
+              >
+                Abrir o WhatsApp
+              </a>
+              <button
+                type="button"
+                onClick={copiar}
+                className="cursor-pointer rounded-md border border-graphite-600 bg-transparent px-4 py-2 font-sans text-[13px] font-medium text-graphite-100"
+              >
+                {copiado ? "Pedido copiado" : "Copiar pedido"}
+              </button>
+            </div>
+            <pre className="custom-scroll mt-3 max-h-32 overflow-y-auto whitespace-pre-wrap font-mono text-[11px] leading-relaxed text-graphite-300">
+              {pedido.texto}
+            </pre>
+          </div>
+        )}
 
         <form onSubmit={submit} className="flex flex-col gap-5">
           <div>
