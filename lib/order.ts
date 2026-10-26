@@ -61,7 +61,11 @@ export function buildWhatsAppUrl(d: OrderData): string {
    O WhatsApp continua sendo o caminho principal; o e-mail é a rede de
    segurança para quando a pessoa fecha o zap sem enviar. */
 
-export const ORDER_ENDPOINT = "/api/public/order-request/";
+// Por padrao, mesma origem: no apex o nginx faz proxy de /api/ para o Django.
+// Deploy que nao tenha esse proxy (ex.: preview da Vercel) precisa apontar
+// NEXT_PUBLIC_ORDER_ENDPOINT para https://usecatana.com.br/api/public/order-request/
+export const ORDER_ENDPOINT =
+  process.env.NEXT_PUBLIC_ORDER_ENDPOINT || "/api/public/order-request/";
 
 export type OrderPayload = {
   empresa: string;
