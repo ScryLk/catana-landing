@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { Fragment } from "react";
 import CoverShelf from "@/components/CoverShelf";
 import Faq from "@/components/Faq";
 import HeroMarginalia from "@/components/HeroMarginalia";
@@ -72,6 +73,10 @@ const COMPARACAO: [string, string, string, string][] = [
   ["Prazo", "7 dias úteis", "15 dias úteis", "A combinar"],
   ["Garantia de ajustes", "3 meses", "12 meses", "Conforme contrato"],
 ];
+
+/* Mesma ordem das colunas da tabela — usada nos rótulos da versão empilhada,
+   para que as duas leituras nunca saiam de sincronia. */
+const PLANOS_COMPARADOS = ["Essencial", "Completo", "Sob medida"];
 
 export default function Precificacao() {
   return (
@@ -315,7 +320,38 @@ export default function Precificacao() {
       >
         <div className="mx-auto max-w-[1120px]">
           <Eyebrow label="CAT—04.3 · COMPARAÇÃO" />
-          <div className="overflow-x-auto">
+
+          {/* No celular quatro colunas não cabem: a tabela era mais larga que a
+              tela e empurrava "Completo" — justamente o plano mais vendido —
+              para fora, sem nenhuma pista de que havia rolagem lateral. Abaixo
+              de sm a comparação vira uma ficha por critério, com o nome do
+              plano ao lado de cada valor. */}
+          <ul className="m-0 flex list-none flex-col gap-3 p-0 sm:hidden">
+            {COMPARACAO.map(([label, ...cols]) => (
+              <li
+                key={label}
+                className="rounded-lg border border-graphite-600 bg-graphite-950/40 px-4 py-3.5"
+              >
+                <div className="mb-2 font-mono text-[11px] font-medium tracking-[0.18em] text-graphite-300">
+                  {label.toUpperCase()}
+                </div>
+                <dl className="m-0 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5">
+                  {cols.map((col, i) => (
+                    <Fragment key={PLANOS_COMPARADOS[i]}>
+                      <dt className="text-[13px] text-graphite-400">
+                        {PLANOS_COMPARADOS[i]}
+                      </dt>
+                      <dd className="m-0 text-[14px] text-graphite-200">
+                        {col}
+                      </dd>
+                    </Fragment>
+                  ))}
+                </dl>
+              </li>
+            ))}
+          </ul>
+
+          <div className="hidden overflow-x-auto sm:block">
             <table className="w-full min-w-[640px] border-collapse text-sm text-graphite-200">
               <thead>
                 <tr>

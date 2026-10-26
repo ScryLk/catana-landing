@@ -22,9 +22,9 @@ import {
    outro número, está sem WhatsApp Web ou não está logado não fica barrado. */
 
 const LABEL =
-  "mb-2 block font-mono text-[11px] font-medium tracking-[0.18em] text-graphite-300";
+  "mb-1 block font-mono text-[11px] font-medium tracking-[0.18em] text-graphite-300 sm:mb-2";
 const FIELD =
-  "w-full rounded-lg border border-graphite-600 bg-graphite-950 px-4 py-3 font-sans text-[15px] text-graphite-100 placeholder:text-graphite-400 focus:border-graphite-300 focus:outline-none";
+  "w-full rounded-lg border border-graphite-600 bg-graphite-950 px-4 py-2.5 font-sans text-[15px] text-graphite-100 placeholder:text-graphite-400 focus:border-graphite-300 focus:outline-none sm:py-3";
 
 /* Selo de estado: verde para confirmado, vermelho para falha.
 
@@ -186,9 +186,9 @@ export default function OrderModal() {
     >
       {/* Centraliza quando cabe e deixa a página rolar quando não cabe.
           O cartão em si nunca tem barra de rolagem própria. */}
-      <div className="flex min-h-full items-center justify-center p-5">
+      <div className="flex min-h-full items-center justify-center p-4 sm:p-5">
         <div
-          className="w-full max-w-[560px] rounded-xl border border-graphite-600 bg-graphite-900 p-7 sm:p-9"
+          className="w-full max-w-[560px] rounded-xl border border-graphite-600 bg-graphite-900 p-4 sm:p-9"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="mb-1 flex items-center justify-between gap-4">
@@ -249,15 +249,15 @@ export default function OrderModal() {
             </div>
           ) : (
             <>
-              <h2 className="m-0 mb-2 text-2xl font-extrabold tracking-[-0.02em] text-graphite-100">
+              <h2 className="m-0 mb-1.5 text-xl font-extrabold tracking-[-0.02em] text-graphite-100 sm:mb-2 sm:text-2xl">
                 Encomendar catálogo
               </h2>
-              <p className="m-0 mb-6 text-[13px] leading-normal text-graphite-300">
+              <p className="m-0 mb-3 text-[13px] leading-normal text-graphite-300 sm:mb-6">
                 Só o essencial para começar. Logo, fotos e lista de produtos
                 você envia depois, direto na conversa.
               </p>
 
-              <form onSubmit={submit} className="flex flex-col gap-4">
+              <form onSubmit={submit} className="flex flex-col gap-2.5 sm:gap-4">
                 {/* Armadilha para bots. Fica fora da tela e fora da tabulação;
                     humano não chega aqui, robô preenche tudo. */}
                 <div
@@ -286,7 +286,7 @@ export default function OrderModal() {
                   />
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-2.5 sm:grid-cols-2 sm:gap-4">
                   <div>
                     <label htmlFor="ord-segmento" className={LABEL}>
                       SEGMENTO
@@ -311,7 +311,7 @@ export default function OrderModal() {
                   </div>
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-2.5 sm:grid-cols-2 sm:gap-4">
                   <div>
                     <label htmlFor="ord-produtos" className={LABEL}>
                       QUANTOS PRODUTOS?
@@ -360,7 +360,7 @@ export default function OrderModal() {
                 <button
                   type="submit"
                   disabled={enviando}
-                  className="cursor-pointer rounded-lg border border-graphite-100 bg-graphite-100 px-6 py-4 font-sans text-[15px] font-bold text-graphite-950 transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-graphite-200 focus-visible:outline-offset-[3px] disabled:cursor-wait disabled:opacity-70"
+                  className="cursor-pointer rounded-lg border border-graphite-100 bg-graphite-100 px-6 py-3 font-sans text-[15px] font-bold text-graphite-950 transition-colors hover:bg-white sm:py-4 focus-visible:outline-2 focus-visible:outline-graphite-200 focus-visible:outline-offset-[3px] disabled:cursor-wait disabled:opacity-70"
                 >
                   {enviando ? "Enviando…" : "Enviar pedido →"}
                 </button>
