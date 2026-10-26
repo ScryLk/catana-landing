@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { Fragment } from "react";
 import CoverShelf from "@/components/CoverShelf";
 import Faq from "@/components/Faq";
@@ -96,14 +95,8 @@ export default function Precificacao() {
           className={`hero-reveal relative z-[3] flex items-center justify-between py-6 ${PAD_X}`}
           style={{ "--reveal": "3.4s" } as React.CSSProperties}
         >
-          <Image
-            src="/logo.png"
-            alt="catana"
-            width={32}
-            height={32}
-            priority
-            className="block"
-          />
+          {/* Marca do topo: só a assinatura, sem o "#" ao lado */}
+          <Signature label="catana" className="block w-[74px] text-graphite-200" />
           <a
             href={`https://wa.me/${WHATSAPP_NUMBER}`}
             target="_blank"
@@ -119,15 +112,6 @@ export default function Precificacao() {
           className={`relative overflow-hidden pt-[clamp(48px,8vw,96px)] pb-[clamp(72px,10vw,120px)] ${PAD_X}`}
         >
           <div className="relative z-[2] mx-auto flex max-w-[880px] flex-col items-center text-center">
-            <Image
-              src="/logo.png"
-              alt=""
-              width={96}
-              height={96}
-              priority
-              className="hero-reveal mb-2 block"
-              style={{ "--reveal": "3.0s" } as React.CSSProperties}
-            />
             {/* Assinatura do estúdio — a mesma desenhada na intro */}
             <Signature
               label="catana"
